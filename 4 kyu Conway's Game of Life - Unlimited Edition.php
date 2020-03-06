@@ -409,7 +409,7 @@ print_r($array);
 
 ### Final result = PASSED
 /*
-function findEdges($array)
+function findEdges($array)  // This function  findes edges of 2d array and trims it to rectangle where 1 are on the edges
 {
   $topRow=0;
   $bottomRow=0;
@@ -480,7 +480,7 @@ if($newArray==$array)
 return $newArray;
 }
 
-function lifeStage(array $array,int $k,int $n)
+function lifeStage(array $array,int $k,int $n) // This function checks how many neighbor cells have value == 1
 {
   $aliveNeighbor=0;
 
@@ -505,7 +505,7 @@ function lifeStage(array $array,int $k,int $n)
 function get_generation(array $array, int $generations): array {
 
 $i=0;
-while ($generations>$i)
+while ($generations>$i) // loops through generations
 {
 for($k=-1;$k<count($array)+1;$k++)
 {
@@ -545,13 +545,12 @@ for($k=-1;$k<count($array)+1;$k++)
     }
   }
 }
-// $arrayAliveNeighbors=array(); // cleaning array
+$arrayAliveNeighbors=array(); // cleaning array
 $array=$newGeneration; //
 $i++; // i-th generation
 }
 $array=findEdges($array);
-// $array=removeColumn($array);
-// $array=removeRow($array);
+
 
 
 echo htmlize($array) . "\r\n";
