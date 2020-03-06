@@ -507,16 +507,16 @@ function get_generation(array $array, int $generations): array {
 $i=0;
 while ($generations>$i) // loops through generations
 {
-for($k=-1;$k<count($array)+1;$k++)
+for($k=-1;$k<count($array)+1;$k++) // its k=-1 because it simulate infinite array
 {
-  for($n=-1;$n<count($array[1])+1;$n++)
+  for($n=-1;$n<count($array[1])+1;$n++) // its n=-1 because it simulate infinite array
   {
      $arrayAliveNeighbors[$k][$n]=lifeStage($array,$k,$n);
   }
 }
-for($k=-1;$k<count($array)+1;$k++)
+for($k=-1;$k<count($array)+1;$k++) // its k=-1 because it simulate infinite array
 {
-  for($n=-1;$n<count($array[1])+1;$n++)
+  for($n=-1;$n<count($array[1])+1;$n++) // its n=-1 because it simulate infinite array
   {
     if($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<2) //dies because of underpopulation
     {
@@ -535,7 +535,7 @@ for($k=-1;$k<count($array)+1;$k++)
       $newGeneration[$k+1][$n+1]=1;
     }
 
-    elseif(empty($array[$k][$n]) && $arrayAliveNeighbors[$k][$n]!=3)
+    elseif(empty($array[$k][$n]) && $arrayAliveNeighbors[$k][$n]!=3) // it fills 0 in to the edges of newArray when there is no value inside that cell
     {
       $newGeneration[$k+1][$n+1]=0;
     }
