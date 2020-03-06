@@ -23,6 +23,7 @@ For illustration purposes, 0 and 1 will be represented as ░░ and ▓▓ bloc
  respectively (PHP, C: plain black and white squares). You can take advantage
   of the htmlize function to get a text representation of the universe, e.g.:*/
 set_time_limit(10);
+/*
 function removeRow($array)
 {
 
@@ -119,10 +120,78 @@ function removeColumn($array)
 }
 return $array;
 }
+*/
 
-
-
-
+function findEdges($array)
+{
+  $topRow=0;
+  $bottomRow=0;
+  $leftColumn=0;
+  $rightColumn=0;
+  $newArray=array();
+  for($row=0;$row<count($array);$row++)
+  {
+    for($column=0;$column<count($array[0]);$column++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $topRow=$row;
+        $row=count($array);
+        break;
+      }
+    }
+  }
+  for($row=count($array);$row>0;$row--)
+  {
+    for($column=0;$column<count($array[0]);$column++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $bottomRow=$row;
+        $row=0;
+        break;
+      }
+    }
+  }
+  for($column=0;$column<count($array[0]);$column++)
+  {
+    for($row=0;$row<count($array);$row++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $leftColumn=$column;
+        $column=count($array[0]);
+        break;
+      }
+    }
+  }
+  for($column=count($array[0]);$column>0;$column--)
+  {
+    for($row=0;$row<count($array);$row++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $rightColumn=$column;
+        $column=0;
+        break;
+      }
+    }
+  }
+for($row=0;$row<$bottomRow-$topRow+1;$row++)
+{
+  for($column=0;$column<$rightColumn-$leftColumn+1;$column++)
+  {
+    $newArray[$row][$column]=$array[$row+$topRow][$column+$leftColumn];
+    }
+}
+$array=array();
+$array[0][0]=0;
+if($newArray==$array)
+{
+  $newArray[0]=array();
+}
+return $newArray;
+}
 
 
 
@@ -131,7 +200,8 @@ return $array;
 
 function lifeStage(array $array,int $k,int $n)
 {
-  $aliveNeigbor=0;
+  $aliveNeighbor=0;
+
   for($column=-1;$column<=1;$column++)
   {
     for($row=-1;$row<=1;$row++)
@@ -142,15 +212,16 @@ function lifeStage(array $array,int $k,int $n)
         {
           continue;
         }
-        $aliveNeighbor++;
+          $aliveNeighbor++;
       }
     }
   }
 
-  return $aliveNeighbor;
+  return intval($aliveNeighbor);
 }
 
-error_reporting(0); // array offsets
+ // array offsets
+error_reporting(0);
 $generation=1;
 $arrayAliveNeighbors=array();
 $newGeneration=array();
@@ -166,116 +237,34 @@ for($k=0;$k<$height;$k++) // $array initialization
 
 $array[0][0]=1;
 $array[0][1]=0;
-$array[0][2]=1;
+$array[0][2]=0;
+//$array[0][3]=0;
+//$array[0][4]=0;
+
 $array[1][0]=0;
-$array[1][1]=0;
-$array[1][2]=0;
+$array[1][1]=1;
+$array[1][2]=1;
+//$array[1][3]=0;
+//$array[1][4]=0;
+
 $array[2][0]=1;
-$array[2][1]=0;
-$array[2][2]=1;
-
-for($k=0;$k<count($array);$k++)
-{
-  echo "[";
-  for($n=0;$n<count($array[$k]);$n++)
-  {
-    if($n<$width-1)
-    {
-    echo $array[$k][$n],",";
-    }
-    else
-    {
-      echo $array[$k][$n];
-    }
-  }
-  echo "]<br>";
-}
-
-
+$array[2][1]=1;
+$array[2][2]=0;
+//$array[2][3]=0;
+//$array[2][4]=0;
 /*
-$i=0;
-while ($generation>$i)
-{
+$array[3][0]=1;
+$array[3][1]=0;
+$array[3][2]=1;
+$array[3][3]=0;
+$array[3][4]=0;
 
-
-
-for($k=0;$k<count($array);$k++)
-{
-  for($n=0;$n<count($array[$k]);$n++)
-  {
-    error_reporting(0); // array offsets
-    //echo "life stage of [$k][$n] =";
-    //echo lifeStage($array,$k,$n);
-    //echo "<br>";
-    $arrayAliveNeighbors[$k][$n]=lifeStage($array,$k,$n);
-  }
-}
-
-for($k=0;$k<count($array);$k++)
-{
-  for($n=0;$n<count($array[$k]);$n++)
-  {
-    if($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<2) //dies because of underpopulation
-    {
-      $newGeneration[$k][$n]=0;
-    }
-    elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]>3) //dies because of overcrowding
-    {
-      $newGeneration[$k][$n]=0;
-    }
-    elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<=3 && $arrayAliveNeighbors[$k][$n]>=2) // survieves
-    {echo "<hr> Alive Neighbors<br>";
-
-      $newGeneration[$k][$n]=1;
-    }
-    elseif($array[$k][$n]==0 && $arrayAliveNeighbors[$k][$n]==3) // becomes alive because 3 neighbors
-    {
-      $newGeneration[$k][$n]=1;
-    }
-    else
-    {
-      $newGeneration[$k][$n]=$array[$k][$n];
-    }
-  }
-}
-
-$arrayAliveNeighbors=array(); // cleaning array
-$array=$newGeneration; //
-$i++; // i-th generation
-}
-
+$array[4][0]=1;
+$array[4][1]=1;
+$array[4][2]=1;
+$array[4][3]=1;
+$array[4][4]=1;
 */
-
-
-/*
-echo "<hr> Alive Neighbors<br>";
-
-
-
-for($k=0;$k<$height;$k++)
-{
-  echo "[";
-  for($n=0;$n<$width;$n++)
-  {
-    if($n<$width-1)
-    {
-    echo $arrayAliveNeighbors[$k][$n],",";
-    }
-    else
-    {
-      echo $arrayAliveNeighbors[$k][$n];
-    }
-  }
-  echo "]<br>";
-}
-*/
-
-echo "<br>";
-
-
-
-echo "<hr> New Generation<br>";
-
 for($k=0;$k<count($array);$k++)
 {
   echo "[";
@@ -293,6 +282,107 @@ for($k=0;$k<count($array);$k++)
   echo "]<br>";
 }
 
+
+
+$i=0;
+while ($generation>$i)
+{
+for($k=-1;$k<count($array)+1;$k++)
+{
+  for($n=-1;$n<count($array[1])+1;$n++)
+  {
+     $arrayAliveNeighbors[$k][$n]=lifeStage($array,$k,$n);
+  }
+}
+for($k=-1;$k<count($array)+1;$k++)
+{
+  for($n=-1;$n<count($array[1])+1;$n++)
+  {
+    if($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<2) //dies because of underpopulation
+    {
+      $newGeneration[$k+1][$n+1]=0;
+    }
+    elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]>3) //dies because of overcrowding
+    {
+      echo "CZY DZIAŁA";
+      $newGeneration[$k+1][$n+1]=0;
+    }
+    elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<=3 && $arrayAliveNeighbors[$k][$n]>=2) // survieves
+    {
+      $newGeneration[$k+1][$n+1]=1;
+    }
+    elseif($arrayAliveNeighbors[$k][$n]==3 && $array[$k][$n]==0 || empty($array[$k][$n]) && $arrayAliveNeighbors[$k][$n]==3 ) // becomes alive because 3 neighbors
+    {
+      $newGeneration[$k+1][$n+1]=1;
+    }
+
+    elseif(empty($array[$k][$n]) && $arrayAliveNeighbors[$k][$n]!=3)
+    {
+      $newGeneration[$k+1][$n+1]=0;
+    }
+    else
+    {
+        $newGeneration[$k+1][$n+1]=$array[$k][$n];
+    }
+  }
+}
+$array=findEdges($array);
+// $arrayAliveNeighbors=array(); // cleaning array
+$array=$newGeneration; //
+$i++; // i-th generation
+}
+
+
+
+echo "<hr> Alive Neighbors<br>";
+
+
+for($k=-1;$k<count($arrayAliveNeighbors);$k++)
+{
+  echo $k,"[";
+  for($n=-1;$n<count($arrayAliveNeighbors[$k]);$n++)
+  {
+    if($n<count($arrayAliveNeighbors[$k])-2)
+    {
+      echo $arrayAliveNeighbors[$k][$n],",";
+    }
+    else
+    {
+      echo $arrayAliveNeighbors[$k][$n];
+    }
+  }
+  echo "]<br>";
+}
+
+
+echo "<br>";
+
+
+
+echo "<hr> New Generation<br>";
+
+for($k=0;$k<count($array);$k++)
+{
+  echo $k,"[";
+  for($n=0;$n<count($array[$k]);$n++)
+  {
+    if($n<count($array[$k])-1)
+    {
+    echo $array[$k][$n],",";
+    }
+    else
+    {
+      echo $array[$k][$n];
+    }
+  }
+  echo "]<br>";
+}
+findEdges($array);
+
+
+
+
+/*
 $array=removeRow($array);
 $array=removeColumn($array);
 echo "<hr> New Generation removed Row<br>";
@@ -315,8 +405,160 @@ for($k=0;$k<count($array);$k++)
 }
 
 print_r($array);
+*/
+
+### Final result = PASSED
+/*
+function findEdges($array)
+{
+  $topRow=0;
+  $bottomRow=0;
+  $leftColumn=0;
+  $rightColumn=0;
+  $newArray=array();
+  for($row=0;$row<count($array);$row++)
+  {
+    for($column=0;$column<count($array[0]);$column++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $topRow=$row;
+        $row=count($array);
+        break;
+      }
+    }
+  }
+  for($row=count($array);$row>0;$row--)
+  {
+    for($column=0;$column<count($array[0]);$column++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $bottomRow=$row;
+        $row=0;
+        break;
+      }
+    }
+  }
+  for($column=0;$column<count($array[0]);$column++)
+  {
+    for($row=0;$row<count($array);$row++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $leftColumn=$column;
+        $column=count($array[0]);
+        break;
+      }
+    }
+  }
+  for($column=count($array[0]);$column>0;$column--)
+  {
+    for($row=0;$row<count($array);$row++)
+    {
+      if($array[$row][$column]==1)
+      {
+        $rightColumn=$column;
+        $column=0;
+        break;
+      }
+    }
+  }
+for($row=0;$row<$bottomRow-$topRow+1;$row++)
+{
+  for($column=0;$column<$rightColumn-$leftColumn+1;$column++)
+  {
+    $newArray[$row][$column]=$array[$row+$topRow][$column+$leftColumn];
+  }
+}
+$array=array();
+$array[0][0]=0;
+if($newArray==$array)
+{
+  $newArray[0]=array();
+}
+return $newArray;
+}
+
+function lifeStage(array $array,int $k,int $n)
+{
+  $aliveNeighbor=0;
+
+  for($column=-1;$column<=1;$column++)
+  {
+    for($row=-1;$row<=1;$row++)
+    {
+      if($array[$k-$column][$n-$row]==1)
+      {
+        if($column==0 && $row==0)
+        {
+          continue;
+        }
+          $aliveNeighbor++;
+      }
+    }
+  }
+
+  return intval($aliveNeighbor);
+}
+
+function get_generation(array $array, int $generations): array {
+
+$i=0;
+while ($generations>$i)
+{
+for($k=-1;$k<count($array)+1;$k++)
+{
+  for($n=-1;$n<count($array[1])+1;$n++)
+  {
+     $arrayAliveNeighbors[$k][$n]=lifeStage($array,$k,$n);
+  }
+}
+for($k=-1;$k<count($array)+1;$k++)
+{
+  for($n=-1;$n<count($array[1])+1;$n++)
+  {
+    if($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<2) //dies because of underpopulation
+    {
+      $newGeneration[$k+1][$n+1]=0;
+    }
+    elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]>3) //dies because of overcrowding
+    {
+      $newGeneration[$k+1][$n+1]=0;
+    }
+    elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<=3 && $arrayAliveNeighbors[$k][$n]>=2) // survieves
+    {
+      $newGeneration[$k+1][$n+1]=1;
+    }
+    elseif($arrayAliveNeighbors[$k][$n]==3 && $array[$k][$n]==0 || empty($array[$k][$n]) && $arrayAliveNeighbors[$k][$n]==3 ) // becomes alive because 3 neighbors
+    {
+      $newGeneration[$k+1][$n+1]=1;
+    }
+
+    elseif(empty($array[$k][$n]) && $arrayAliveNeighbors[$k][$n]!=3)
+    {
+      $newGeneration[$k+1][$n+1]=0;
+    }
+    else
+    {
+        $newGeneration[$k+1][$n+1]=$array[$k][$n];
+    }
+  }
+}
+// $arrayAliveNeighbors=array(); // cleaning array
+$array=$newGeneration; //
+$i++; // i-th generation
+}
+$array=findEdges($array);
+// $array=removeColumn($array);
+// $array=removeRow($array);
 
 
+echo htmlize($array) . "\r\n";
+
+return $array;
+}
+*/
 
 
 
