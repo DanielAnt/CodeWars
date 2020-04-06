@@ -22,8 +22,9 @@ Each cell's neighborhood is the 8 cells immediately around it (i.e. Moore Neighb
 For illustration purposes, 0 and 1 will be represented as ░░ and ▓▓ blocks
  respectively (PHP, C: plain black and white squares). You can take advantage
   of the htmlize function to get a text representation of the universe, e.g.:*/
-set_time_limit(10);
 /*
+set_time_limit(10);
+
 function removeRow($array)
 {
 
@@ -120,7 +121,7 @@ function removeColumn($array)
 }
 return $array;
 }
-*/
+
 
 function findEdges($array)
 {
@@ -222,7 +223,7 @@ function lifeStage(array $array,int $k,int $n)
 
  // array offsets
 error_reporting(0);
-$generation=1;
+$generation=5;
 $arrayAliveNeighbors=array();
 $newGeneration=array();
 $width=3;
@@ -238,21 +239,21 @@ for($k=0;$k<$height;$k++) // $array initialization
 $array[0][0]=1;
 $array[0][1]=0;
 $array[0][2]=0;
-//$array[0][3]=0;
-//$array[0][4]=0;
+$array[0][3]=0;
+$array[0][4]=0;
 
 $array[1][0]=0;
 $array[1][1]=1;
 $array[1][2]=1;
-//$array[1][3]=0;
-//$array[1][4]=0;
+$array[1][3]=0;
+$array[1][4]=0;
 
 $array[2][0]=1;
 $array[2][1]=1;
 $array[2][2]=0;
-//$array[2][3]=0;
-//$array[2][4]=0;
-/*
+$array[2][3]=0;
+$array[2][4]=0;
+
 $array[3][0]=1;
 $array[3][1]=0;
 $array[3][2]=1;
@@ -264,7 +265,7 @@ $array[4][1]=1;
 $array[4][2]=1;
 $array[4][3]=1;
 $array[4][4]=1;
-*/
+
 for($k=0;$k<count($array);$k++)
 {
   echo "[";
@@ -304,7 +305,6 @@ for($k=-1;$k<count($array)+1;$k++)
     }
     elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]>3) //dies because of overcrowding
     {
-      echo "CZY DZIAŁA";
       $newGeneration[$k+1][$n+1]=0;
     }
     elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<=3 && $arrayAliveNeighbors[$k][$n]>=2) // survieves
@@ -326,10 +326,33 @@ for($k=-1;$k<count($array)+1;$k++)
     }
   }
 }
-$array=findEdges($array);
-// $arrayAliveNeighbors=array(); // cleaning array
+
+
+$arrayAliveNeighbors=array(); // cleaning array
 $array=$newGeneration; //
 $i++; // i-th generation
+
+
+echo "<hr> $i-th Generation <br>";
+for($l=0;$l<count($array);$l++)
+{
+  echo "[";
+  for($m=0;$m<count($array[$l]);$m++)
+  {
+    if($m<count($array[$l])-1)
+    {
+    echo $array[$l][$m],",";
+    }
+    else
+    {
+      echo $array[$l][$m];
+    }
+  }
+  echo "]<br>";
+}
+
+
+
 }
 
 
@@ -377,12 +400,12 @@ for($k=0;$k<count($array);$k++)
   }
   echo "]<br>";
 }
-findEdges($array);
 
 
 
 
-/*
+
+
 $array=removeRow($array);
 $array=removeColumn($array);
 echo "<hr> New Generation removed Row<br>";
@@ -559,6 +582,7 @@ echo htmlize($array) . "\r\n";
 return $array;
 }
 */
+
 
 
 
