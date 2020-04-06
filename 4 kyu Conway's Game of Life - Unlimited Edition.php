@@ -304,7 +304,7 @@ for($k=-1;$k<count($array)+1;$k++)
     }
     elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]>3) //dies because of overcrowding
     {
-      echo "CZY DZIAŁA";
+      
       $newGeneration[$k+1][$n+1]=0;
     }
     elseif($array[$k][$n]==1 && $arrayAliveNeighbors[$k][$n]<=3 && $arrayAliveNeighbors[$k][$n]>=2) // survieves
