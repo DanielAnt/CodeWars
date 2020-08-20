@@ -1,0 +1,108 @@
+#https://www.codewars.com/kata/5a2a597a8882f392020005e5
+
+
+def blox_solver(ar):
+    path = []
+    visited = []
+    road = ""
+    for x, row in enumerate(ar):
+        for y, col in enumerate(row):
+            if col == "B":
+                startPos = [x,y]
+                ar[x] = ar[x].replace("B","1")
+            if col == "X":
+                endPos = [x,y]
+    state = 1
+    x, y = startPos
+    path.append([x,y,x,y,state,road])
+    h, w = range(len(ar)),range(len(ar[0]))
+    
+    
+    
+    cycle = True
+    while cycle:
+        
+        try:
+            x, y, x1,y1, state, road = path.pop(0)
+        except:
+            break
+        visited.append([x,y,x1,y1,state])
+        visited.append([x1,y1,x,y,state])
+        if state == 1:
+            for u,v in (1,0),(-1,0),(0,1),(0,-1):
+                nextX = x+u
+                nextY = y+v
+                nextX1 = x+2*u
+                nextY1 = y+2*v
+                if nextX1 in h and nextY1 in w and [nextX,nextY,nextX1,nextY1,0] not in visited:
+                    if ar[nextX][nextY] in "1X" and ar[nextX1][nextY1] in "1X":
+                        path.append([nextX,nextY,nextX1,nextY1,0,road + " {},{}".format(u,v)])
+        else:
+            for u,v in (1,0),(-1,0),(0,1),(0,-1):
+                if x - x1 != 0:
+                    if u == -1:
+                        nextX = min([x,x1]) + u
+                        if nextX in h and [nextX,y,nextX,y,1] not in visited:
+                            if ar[nextX][y] == "1":
+                                path.append([nextX,y,nextX,y,1,road + " {},{}".format(u,v)])
+                            elif ar[nextX][y] == "X":
+                                cycle = False
+                                road += " {},{}".format(u,v)
+                                break
+                                
+                    elif u == 1:
+                        nextX = max([x,x1]) + u
+                        if nextX in h and [nextX,y,nextX,y,1] not in visited:
+                            if ar[nextX][y] == "1":
+                                path.append([nextX,y,nextX,y,1,road + " {},{}".format(u,v)])
+                            elif ar[nextX][y] == "X":
+                                cycle = False
+                                road += " {},{}".format(u,v)
+                                break
+                    else:
+                        nextY = y + v
+                        if nextY in w and [x,nextY,x1,nextY,0] not in visited and ar[x][nextY] != "0" and ar[x1][nextY] != "0":
+                            path.append([x,nextY,x1,nextY,0,road + " {},{}".format(u,v)])
+                    
+                        
+                else:
+                    if v == -1:
+                        nextY = min([y,y1]) + v
+                        if nextY in w and [x,nextY,x1,nextY,1] not in visited:
+                            if ar[x][nextY] == "1":
+                                path.append([x,nextY,x1,nextY,1,road + " {},{}".format(u,v)])
+                            elif ar[x][nextY] == "X":
+                                cycle = False
+                                road += " {},{}".format(u,v)
+                                break
+                    elif v == 1:
+                        nextY = max([y,y1]) + v
+                        if nextY in w and [x,nextY,x1,nextY,1] not in visited:
+                            if ar[x][nextY] == "1":
+                                path.append([x,nextY,x1,nextY,1,road + " {},{}".format(u,v)])
+                            elif ar[x][nextY] == "X":
+                                cycle = False
+                                road += " {},{}".format(u,v)
+                                break
+                    else:
+                        nextX = x + u
+                        if nextX in h and [nextX,y,nextX,y1,0] not in visited and ar[nextX][y] != "0" and ar[nextX][y1] != "0":
+                            path.append([nextX,y,nextX,y1,0,road + " {},{}".format(u,v)])
+            
+        
+    string = ""
+    for turn in road[1:].split(" "):
+        if turn == "1,0":
+            string += "D"
+            continue
+        elif turn == "-1,0":
+            string += "U"
+            continue
+        elif turn == "0,1":
+            string += "R"
+            continue
+        elif turn == "0,-1":
+            string += "L"
+            continue
+            
+    return string
